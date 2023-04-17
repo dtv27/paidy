@@ -1,8 +1,11 @@
 package forex.services.rates
 
-import cats.Applicative
-import interpreters._
+import cats.effect.Sync
+import forex.services.CacheRepository
+import forex.services.rates.interpreters.RateLookup
 
 object Interpreters {
-  def dummy[F[_]: Applicative]: Algebra[F] = new OneFrameDummy[F]()
+
+  def rateLookup[F[_]: Sync](cache: CacheRepository[F]): RepositoryLookupAlgebra[F] = new RateLookup[F](cache)
+
 }
