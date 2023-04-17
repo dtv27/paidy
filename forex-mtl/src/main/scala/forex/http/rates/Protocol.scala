@@ -4,25 +4,24 @@ package rates
 import forex.domain.Currency.show
 import forex.domain.Rate.Pair
 import forex.domain._
+import forex.services.oneframe.Protocol.OneFramePayload
 import io.circe._
 import io.circe.generic.extras.Configuration
-import io.circe.generic.extras.semiauto.deriveConfiguredEncoder
+import io.circe.generic.extras.semiauto.{ deriveConfiguredDecoder, deriveConfiguredEncoder }
 
+/** Provides encoders and decoders for various types related to the rates HTTP endpoint */
 object Protocol {
 
   implicit val configuration: Configuration = Configuration.default.withSnakeCaseMemberNames
-
-  final case class GetApiRequest(
-      from: Currency,
-      to: Currency
-  )
 
   final case class GetApiResponse(
       from: Currency,
       to: Currency,
       price: Price,
-      timestamp: Timestamp
+      timestamp: Timestamp,
   )
+
+  final case class RatesHttpError(code: String, message: String)
 
   implicit val currencyEncoder: Encoder[Currency] =
     Encoder.instance[Currency] { show.show _ andThen Json.fromString }
@@ -35,5 +34,9 @@ object Protocol {
 
   implicit val responseEncoder: Encoder[GetApiResponse] =
     deriveConfiguredEncoder[GetApiResponse]
+
+  implicit val ratesHttpErrorEncoder: Encoder[RatesHttpError] = deriveConfiguredEncoder[RatesHttpError]
+
+  implicit val oneFrameRateDecoder: Decoder[OneFramePayload] = deriveConfiguredDecoder[OneFramePayload]
 
 }

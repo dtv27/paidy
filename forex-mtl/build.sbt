@@ -4,6 +4,7 @@ name := "forex"
 version := "1.0.1"
 
 scalaVersion := "2.13.5"
+
 scalacOptions ++= Seq(
   "-deprecation", // Emit warning and location for usages of deprecated APIs.
   "-encoding",
@@ -55,6 +56,7 @@ libraryDependencies ++= Seq(
   Libraries.catsEffect,
   Libraries.fs2,
   Libraries.http4sDsl,
+  Libraries.http4sClient,
   Libraries.http4sServer,
   Libraries.http4sCirce,
   Libraries.circeCore,
@@ -63,7 +65,17 @@ libraryDependencies ++= Seq(
   Libraries.circeParser,
   Libraries.pureConfig,
   Libraries.logback,
-  Libraries.scalaTest        % Test,
-  Libraries.scalaCheck       % Test,
-  Libraries.catsScalaCheck   % Test
+  Libraries.scalaTest       % Test,
+  Libraries.scalaCheck      % Test,
+  Libraries.catsScalaCheck  % Test,
+  Libraries.mockitoTest     % Test,
+  Libraries.mockitoCatsTest % Test,
+  Libraries.http4sTesting   % Test,
 )
+
+enablePlugins(DockerPlugin)
+enablePlugins(JavaAppPackaging)
+dockerBaseImage := "openjdk:11"
+Compile / mainClass := Some("forex.Main")
+Docker / packageName := "paidy/forex"
+dockerExposedPorts ++= Seq(9000, 9000)
